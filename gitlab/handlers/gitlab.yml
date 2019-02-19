@@ -1,0 +1,6 @@
+# In case the database server changed IP.
+- name: Flush DNS caches
+  command: systemd-resolve --flush-caches
+
+- name: Reconfigure gitlab
+  command: gitlab-ctl reconfigure

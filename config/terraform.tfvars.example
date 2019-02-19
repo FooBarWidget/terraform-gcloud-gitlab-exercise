@@ -1,0 +1,5 @@
+gcloud_project = "Google Cloud project ID here"
+zone = "europe-west4-a"
+root_domain = "example.com"
+instance_ssh_keys = "ansible:<paste SSH public key here>"
+gitlab_db_password = "<copy from ansible-playbooks.yml>"

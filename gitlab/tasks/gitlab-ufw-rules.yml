@@ -1,0 +1,11 @@
+- name: Allow incoming HTTP traffic
+  ufw:
+    rule: allow
+    port: 80
+    proto: tcp
+
+- name: Allow incoming HTTPS traffic
+  ufw:
+    rule: allow
+    port: 443
+    proto: tcp

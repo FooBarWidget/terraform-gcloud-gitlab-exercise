@@ -1,0 +1,19 @@
+- name: Install gcloud SDK APT key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: Install gcloud SDK APT repository
+  apt_repository:
+    repo: "deb https://packages.cloud.google.com/apt cloud-sdk-{{ ansible_distribution_release }} main"
+    filename: gcloud-sdk
+
+- name: Install google-cloud-sk
+  apt:
+    name: google-cloud-sdk
+    update_cache: yes
+    cache_valid_time: 600 # 10 minutes
+
+- name: Activate service account key
+  command: gcloud auth activate-service-account --key-file=/etc/google-service-account-key.json
+  args:
+    creates: /root/.config/gcloud/configurations/config_default

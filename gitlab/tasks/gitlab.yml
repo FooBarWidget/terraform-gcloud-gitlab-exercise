@@ -1,0 +1,50 @@
+- name: Install GitLab APT key
+  apt_key:
+    url: https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey
+
+- name: Install GitLab APT repository
+  apt_repository:
+    repo: "deb https://packages.gitlab.com/gitlab/gitlab-ce/ubuntu/ {{ ansible_distribution_release }} main"
+    filename: gitlab-ce
+
+- name: Install GitLab dependencies
+  with_items:
+    - openssh-server
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 600 # 10 minutes
+
+- name: Create GitLab config dir
+  file:
+    path: /etc/gitlab
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Install GitLab Ombinus config
+  template:
+    src: gitlab.rb.j2
+    dest: /etc/gitlab/gitlab.rb
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - Flush DNS caches
+    - Reconfigure gitlab
+
+- name: Install GitLab
+  apt:
+    name: gitlab-ce
+    update_cache: yes
+    cache_valid_time: 600 # 10 minutes
+  notify:
+    - Flush DNS caches
+    - Reconfigure gitlab
+
+- name: Log GitLab to StackDriver
+  copy:
+    src: gcloud-logging-gitlab-omnibus.conf
+    dest: /etc/google-fluentd/config.d/gitlab-ombinus.conf
+  notify: Reload google-fluentd

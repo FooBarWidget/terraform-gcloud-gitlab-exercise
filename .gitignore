@@ -1,0 +1,10 @@
+.DS_Store
+.terraform
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+*.auto.tfvars
+*.retry
+/config/ansible-playbooks.yml
+/config/packer.json
+/config/terraform.tfvars

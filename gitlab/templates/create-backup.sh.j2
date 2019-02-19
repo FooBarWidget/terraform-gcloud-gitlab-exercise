@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+TIMESTAMP=${TIMESTAMP:-$(date +'%Y-%m-%d-%H:%M:%S')}
+GITLAB_VERSION=$(dpkg -s gitlab-ce | grep '^Version' | sed 's/.*: //; s/-.*//')
+OUTPUT="gitlab-backup_${TIMESTAMP}_v$GITLAB_VERSION.tar.gpg"
+
+# Prevents gsutil from breaking.
+# https://stackoverflow.com/questions/38783140/importerror-no-module-named-google-compute-engine
+export BOTO_CONFIG=/dev/null
+
+set -x
+cd /var/opt/gitlab/backups
+rm -f ./*
+gitlab-rake gitlab:backup:create
+gpg --batch --symmetric --passphrase-fd 0 -o "$OUTPUT" ./*.tar < /etc/gitlab/backup-encryption-key
+gsutil cp "$OUTPUT" gs://gitlab-{{ root_domain | replace('.', '-') }}-backup/

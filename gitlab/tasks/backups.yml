@@ -1,0 +1,25 @@
+- name: Create backup encryption key
+  copy:
+    content: "{{ gitlab_backup_encryption_password }}"
+    dest: /etc/gitlab/backup-encryption-key
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Install backup script
+  template:
+    src: create-backup.sh.j2
+    dest: /usr/local/bin/create-backup.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Install backup cron job entry
+  cron:
+    name: Weekly backup
+    cron_file: weekly_backup
+    user: root
+    minute: '0'
+    hour: '3'
+    weekday: '0'
+    job: /usr/local/bin/create-backup.sh

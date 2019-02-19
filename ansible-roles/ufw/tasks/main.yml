@@ -1,0 +1,25 @@
+- name: Install ufw
+  apt:
+    name: ufw
+    update_cache: yes
+    cache_valid_time: 600 # 10 minutes
+
+- name: Allow incoming SSH traffic
+  ufw:
+    rule: allow
+    port: 22
+    proto: tcp
+
+- name: Set default ufw rule for incoming traffic
+  ufw:
+    direction: incoming
+    policy: deny
+
+- name: Set default ufw rule for outgoing traffic
+  ufw:
+    direction: outgoing
+    policy: allow
+
+- name: Enable ufw
+  ufw:
+    state: enabled

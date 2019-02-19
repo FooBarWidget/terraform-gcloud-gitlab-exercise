@@ -1,0 +1,5 @@
+root_domain: example.com
+gitlab_db_password: <generate one with `openssl rand -hex 16`>
+gitlab_backup_encryption_password: <generate one with `openssl rand -hex 16`>
+gitlab_initial_root_password: <generate one with `openssl rand -hex 16`>
+gitlab_initial_runner_token: <generate one with `openssl rand -hex 16`>

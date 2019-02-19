@@ -1,0 +1,33 @@
+# Set the hostname
+
+# We modify /etc/hosts before activating the new hostname.
+# If we do the other way around, then sudo or a subsequent SSH connection
+# attempt may try to lookup the IP address of the hostname/FQDN, which may fail
+# if the hostname/FQDN is not in /etc/hosts, especially in dev environments.
+- name: Add hostname and FQDN to /etc/hosts
+  blockinfile:
+    dest: /etc/hosts
+    insertbefore: BOF
+    content: "127.0.0.1 {{ hostname }}.{{ root_domain }} {{ hostname }} localhost"
+    marker: '# {mark} ANSIBLE MANAGED HOSTNAME'
+
+- name: Set hostname
+  hostname:
+    name: "{{ hostname }}"
+  when: hostname is defined
+  register: hostname_set_result
+  ignore_errors: true
+
+- name: Check whether setting hostname succeeded
+  fail:
+    msg: |
+      Setting the hostname failed for some reason.
+
+      Tip: does the error message say something like "Failed to create bus connection: No such file or directory"?
+      Then this means that dbus failed to start during boot (you can verify with 'systemctl status dbus').
+      Reboot this server and try again. I don't know why this happens, and this is the only solution I've been able to find so far.
+  when: "'failed' in hostname_set_result and hostname_set_result.failed"
+
+- name: Refresh FQDN
+  setup:
+    filter: "*fqdn*"

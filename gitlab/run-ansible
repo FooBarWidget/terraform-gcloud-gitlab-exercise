@@ -1,0 +1,18 @@
+#!/bin/bash
+set -e
+SELFDIR=$(dirname "$0")
+SELFDIR=$(cd "$SELFDIR" && pwd)
+
+ADDRESS="$1"
+PLAYBOOK="$2"
+if [[ "$ADDRESS" = "" || "$PLAYBOOK" = "" ]]; then
+	echo "Usage: ./run-ansible [USERNAME@]<SERVER ADDRESS> <PLAYBOOK> [ANSIBLE ARGS...]" >&2
+	exit 1
+fi
+shift
+shift
+
+export ANSIBLE_ROLES_PATH="$SELFDIR/../ansible-roles"
+
+set -x
+exec ansible-playbook -i "$ADDRESS," "$PLAYBOOK" "$@"

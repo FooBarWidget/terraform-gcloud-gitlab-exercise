@@ -1,0 +1,4 @@
+- name: Reload google-fluentd
+  systemd:
+    name: google-fluentd.service
+    state: reloaded

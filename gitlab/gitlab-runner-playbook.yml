@@ -1,0 +1,20 @@
+- hosts: all
+  gather_facts: false
+  roles:
+    - role: bootstrap-python
+
+- hosts: all
+  vars_files:
+    - ../config/ansible-playbooks.yml
+  vars:
+    hostname: gitlab-runner
+    unattended_upgrade_origins:
+      - packages.gitlab.com/runner/gitlab-runner:{{ ansible_distribution_release }}
+  roles:
+    - role: common
+    - role: apt-https
+    - role: ufw
+    - role: docker
+    - role: gcloud-logging
+  tasks:
+    - import_tasks: tasks/gitlab-runner.yml

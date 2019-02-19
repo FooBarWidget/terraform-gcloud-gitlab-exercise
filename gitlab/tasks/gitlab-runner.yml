@@ -1,0 +1,33 @@
+- name: Install GitLab Runner APT key
+  apt_key:
+    url: https://packages.gitlab.com/runner/gitlab-runner/gpgkey
+
+- name: Install GitLab Runner APT repository
+  apt_repository:
+    repo: "deb https://packages.gitlab.com/runner/gitlab-runner/ubuntu/ {{ ansible_distribution_release }} main"
+    filename: gitlab-runner
+
+- name: Install GitLab Runner
+  apt:
+    name: gitlab-runner
+    update_cache: yes
+    cache_valid_time: 600 # 10 minutes
+
+- name: Check whether GitLab Runner is registered
+  shell: gitlab-runner list 2>&1 | grep '^{{ ansible_fqdn }}'
+  failed_when: false
+  changed_when: false
+  register: gitlab_runner_list
+
+- name: Register GitLab Runner
+  command: |
+    gitlab-runner register
+      --non-interactive
+      --name {{ ansible_fqdn }}
+      --url https://gitlab.{{ root_domain }}/
+      --registration-token {{ gitlab_initial_runner_token }}
+      --locked=false
+      --run-untagged
+      --executor docker
+      --docker-image ruby:2.6
+  when: gitlab_runner_list.rc != 0

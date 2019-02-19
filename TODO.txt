@@ -1,0 +1,4 @@
+- backup cron job (+logging)
+- gitlab restore
+	1. copy restoration service account key to server
+	2. on server, download backup, run restore script, delete service account key

@@ -1,0 +1,8 @@
+- name: Install APT HTTPS support
+  with_items:
+    - ca-certificates
+    - apt-transport-https
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 600 # 10 minutes

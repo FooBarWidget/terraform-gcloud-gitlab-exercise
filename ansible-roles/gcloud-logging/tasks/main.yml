@@ -1,0 +1,34 @@
+- name: Install Google Cloud Logging APT key
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+
+- name: Install Google Cloud Logging APT repository
+  apt_repository:
+    repo: "deb http://packages.cloud.google.com/apt google-cloud-logging-wheezy main"
+    filename: google-cloud-logging
+
+- name: Install Google Cloud Logging
+  apt:
+    name: google-fluentd
+    update_cache: yes
+    cache_valid_time: 600 # 10 minutes
+
+- name: Install Google Cloud Logging catchall config
+  apt:
+    name: google-fluentd-catch-all-config
+    update_cache: yes
+    cache_valid_time: 600 # 10 minutes
+
+- file:
+    path: /etc/google-fluentd/config.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- file:
+    path: /var/lib/google-fluentd/pos
+    state: directory
+    owner: root
+    group: root
+    mode: 0755

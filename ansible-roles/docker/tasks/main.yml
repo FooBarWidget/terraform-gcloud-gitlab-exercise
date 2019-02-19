@@ -1,0 +1,25 @@
+- name: Install Docker prerequisites
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 600 # 10 minutes
+
+- name: Add the Docker GPG key
+  apt_key:
+    keyserver: hkp://p80.pool.sks-keyservers.net:80
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+
+- name: Install docker.list
+  template:
+    src: docker.list.j2
+    dest: /etc/apt/sources.list.d/docker.list
+  register: docker_list
+
+- name: Install docker
+  apt:
+    name: docker-ce
+    update_cache: "{{ docker_list.changed }}"
+  notify: start docker

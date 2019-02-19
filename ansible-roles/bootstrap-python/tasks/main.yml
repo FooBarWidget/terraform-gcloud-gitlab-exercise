@@ -1,0 +1,11 @@
+- name: Bootstrap a host without Python installed
+  raw: |
+    set -e
+    if test -e /usr/bin/python; then
+      echo Python already installed.
+    else
+      apt-get update -y
+      apt-get install -y python
+    fi
+  register: bootstrap_result
+  changed_when: bootstrap_result.stdout_lines != ["Python already installed."]

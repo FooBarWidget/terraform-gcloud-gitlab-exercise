@@ -1,0 +1,5 @@
+{
+	"account_file": "/path-to-google-cloud-service-account.json",
+	"project_id": "PROJECT ID NAME",
+	"zone": "europe-west4-a"
+}
